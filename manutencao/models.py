@@ -4,6 +4,9 @@ from django.contrib.auth.models import User # <-- 1. Adicione esta importação 
 class Servico(models.Model):
     # Adicione esta linha exata à sua tabela de Serviços:
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+
+class Servico(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     
 class Veiculo(models.Model):
     TIPO_VEICULO = [
@@ -25,6 +28,7 @@ class Servico(models.Model):
     TIPO_SERVICO = [
         ('PREV', 'Preventivo'),
         ('CORR', 'Corretivo'),
+        
     ]
     
     veiculo = models.ForeignKey(Veiculo, on_delete=models.CASCADE, related_name='servicos')
