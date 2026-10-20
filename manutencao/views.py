@@ -1,8 +1,34 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
-from datetime import date, timedelta
-from .models import Veiculo, Servico
-from .forms import ServicoForm, VeiculoForm
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.models import User
+from django.contrib import messages
+
+def cadastrar_usuario(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Conta criada com sucesso! Faça login para continuar.')
+            return redirect('login')
+    else:
+        form = UserCreationForm()
+    return render(request, 'manutencao/cadastro.html', {'form': form})
+@user_passes_test(lambda u: u.is_superuser)
+
+def gestao_usuarios(request):
+    usuarios = User.objects.all().order_by('-date_joined')
+    return render(request, 'manutencao/gestao_usuarios.html', {'usuarios': usuarios})
+@user_passes_test(lambda u: u.is_superuser)
+
+def alternar_status_usuario(request, user_id):
+    usuario = get_object_or_404(User, id=user_id)
+    # Impede que o superusuário desative a própria conta
+    if usuario != request.user:
+        usuario.is_active = not usuario.is_active
+        usuario.save()
+        messages.success(request, f'Status do usuário {usuario.username} alterado com sucesso.')
+    return redirect('gestao_usuarios')
 
 @login_required
 def dashboard(request):

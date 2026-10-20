@@ -19,4 +19,7 @@ urlpatterns = [
     path('veiculo/<int:pk>/editar/', views.editar_veiculo, name='editar_veiculo'),
     path('veiculo/<int:pk>/apagar/', views.apagar_veiculo, name='apagar_veiculo'),
     path('servico/novo/', views.adicionar_servico, name='adicionar_servico'),
+    path('cadastro/', views.cadastrar_usuario, name='cadastro'),
+    path('gestao-usuarios/', views.gestao_usuarios, name='gestao_usuarios'),
+path('gestao-usuarios/alternar/<int:user_id>/', views.alternar_status_usuario, name='alternar_status_usuario'),
 ]
