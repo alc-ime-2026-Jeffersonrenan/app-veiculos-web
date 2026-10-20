@@ -1,0 +1,21 @@
+{% extends 'manutencao/base.html' %}
+
+{% block title %}Apagar Veículo{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm border-danger mx-auto mt-5" style="max-width: 500px;">
+    <div class="card-header bg-danger text-white">
+        <h5 class="mb-0">Confirmar Eliminação</h5>
+    </div>
+    <div class="card-body text-center p-4">
+        <p class="mb-4 text-dark fs-5">Tem a certeza que deseja apagar o veículo <strong>{{ veiculo.marca }} {{ veiculo.modelo }} ({{ veiculo.placa }})</strong>?</p>
+        <p class="text-muted small mb-4">Esta ação apagará também todo o histórico de serviços associado a este veículo e não pode ser desfeita.</p>
+        
+        <form method="POST">
+            {% csrf_token %}
+            <a href="{% url 'detalhes_veiculo' veiculo.pk %}" class="btn btn-outline-secondary me-2">Cancelar</a>
+            <button type="submit" class="btn btn-danger">Sim, Apagar Veículo</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

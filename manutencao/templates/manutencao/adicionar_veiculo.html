@@ -1,0 +1,21 @@
+{% extends 'manutencao/base.html' %}
+
+{% block title %}{% if editando %}Editar{% else %}Novo{% endif %} Veículo{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm mx-auto mt-4" style="max-width: 600px;">
+    <div class="card-header bg-dark text-white">
+        <h5 class="mb-0">{% if editando %}Editar Veículo{% else %}Adicionar Novo Veículo{% endif %}</h5>
+    </div>
+    <div class="card-body p-4">
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="d-flex justify-content-between mt-4">
+                <a href="javascript:history.back()" class="btn btn-outline-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary">{% if editando %}Guardar Alterações{% else %}Salvar Veículo{% endif %}</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

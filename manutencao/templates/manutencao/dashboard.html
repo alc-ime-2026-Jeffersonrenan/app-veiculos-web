@@ -1,0 +1,111 @@
+{% extends 'manutencao/base.html' %}
+
+{% block title %}Dashboard - Gestão de Frota{% endblock %}
+
+{% block content %}
+<!-- ÁREA DE RESUMO FINANCEIRO E GRÁFICO -->
+<div class="row mb-4">
+    <!-- Coluna 1: Total Global -->
+    <div class="col-md-6 mb-3 mb-md-0">
+        <div class="card shadow-sm h-100 border-0" style="background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%); color: white;">
+            <div class="card-body d-flex flex-column justify-content-center p-4">
+                <h5 class="opacity-75 mb-1">Custo Total da Frota</h5>
+                <h1 class="fw-bold mb-0">R$ {{ total_frota|floatformat:2 }}</h1>
+                <p class="mt-3 mb-0 small opacity-75">
+                    Peças: R$ {{ total_pecas|floatformat:2 }} <br>
+                    Mão de Obra: R$ {{ total_mao_obra|floatformat:2 }}
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Coluna 2: Gráfico Analítico -->
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100 border-0">
+            <div class="card-body p-3 d-flex justify-content-center align-items-center">
+                <!-- Tag Canvas onde o Chart.js desenha o gráfico -->
+                <div style="height: 180px; width: 100%; position: relative;">
+                    <canvas id="graficoDespesas"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- LISTAGEM DE VEÍCULOS COM ALERTAS -->
+<div class="row">
+    {% for veiculo in veiculos %}
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm h-100 border-{{ veiculo.status_cor }} border-2">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">{{ veiculo.marca }} {{ veiculo.modelo }}</h5>
+                <span class="badge bg-{{ veiculo.status_cor }}">{{ veiculo.status_alerta }}</span>
+            </div>
+            <div class="card-body d-flex flex-column">
+                <p class="mb-1"><strong>Placa:</strong> {{ veiculo.placa }}</p>
+                <p class="mb-1"><strong>Ano:</strong> {{ veiculo.ano }}</p>
+                
+                <div class="alert alert-{{ veiculo.status_cor }} py-2 mt-3 mb-3 text-center" role="alert">
+                    <small><strong>Status:</strong> {{ veiculo.status_mensagem }}</small>
+                </div>
+                
+                <div class="mt-auto">
+                    <a href="{% url 'detalhes_veiculo' veiculo.pk %}" class="btn btn-outline-dark w-100">Ver Histórico e Serviços</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-warning text-center">
+            Ainda não registou nenhum veículo. Clique em <strong>+ Novo Veículo</strong> para começar.
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- IMPORTAR CHART.JS E INICIALIZAR O GRÁFICO -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Transforma os valores de texto do Django em números Javascript
+    let pecasStr = "{{ total_pecas }}".replace(',', '.');
+    let maoObraStr = "{{ total_mao_obra }}".replace(',', '.');
+    
+    let totalPecas = parseFloat(pecasStr) || 0;
+    let totalMaoObra = parseFloat(maoObraStr) || 0;
+
+    let ctx = document.getElementById('graficoDespesas').getContext('2d');
+
+    // Só desenha o gráfico se existirem custos registados
+    if (totalPecas > 0 || totalMaoObra > 0) {
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Peças', 'Mão de Obra'],
+                datasets: [{
+                    data: [totalPecas, totalMaoObra],
+                    backgroundColor: ['#0dcaf0', '#0d6efd'], // Cores baseadas no gradiente do total
+                    hoverOffset: 4,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: { boxWidth: 15 }
+                    }
+                }
+            }
+        });
+    } else {
+        // Mensagem caso o utilizador ainda não tenha gastos
+        document.getElementById('graficoDespesas').parentElement.innerHTML = 
+            '<p class="text-muted text-center mt-5">Sem gastos registados para gerar gráfico.</p>';
+    }
+});
+</script>
+{% endblock %}

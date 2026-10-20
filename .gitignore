@@ -1,0 +1,14 @@
+# Ambientes Virtuais do Python
+venv/
+env/
+
+# Ficheiros temporários e compilados
+__pycache__/
+*.pyc
+*.pyo
+
+# Banco de dados local (Segurança)
+db.sqlite3
+
+# Ficheiro de variáveis secretas (que criaremos antes de publicar)
+.env
