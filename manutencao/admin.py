@@ -14,6 +14,6 @@ class VeiculoAdmin(admin.ModelAdmin):
 
 @admin.register(Servico)
 class ServicoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'usuario', 'veiculo', 'data', 'valor')
-    list_filter = ('usuario', 'data')
+    list_display = ('id', 'usuario', 'veiculo', 'tipo_servico', 'data_execucao', 'quilometragem')
+    list_filter = ('usuario', 'tipo_servico', 'data_execucao')
     search_fields = ('veiculo__placa', 'descricao', 'usuario__username')

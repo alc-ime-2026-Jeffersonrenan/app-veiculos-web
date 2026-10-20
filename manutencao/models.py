@@ -4,10 +4,7 @@ from django.contrib.auth.models import User # <-- 1. Adicione esta importação 
 class Servico(models.Model):
     # Adicione esta linha exata à sua tabela de Serviços:
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
-
-class Servico(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
-    
+   
 class Veiculo(models.Model):
     TIPO_VEICULO = [
         ('CAR', 'Carro'),
@@ -28,15 +25,20 @@ class Servico(models.Model):
     TIPO_SERVICO = [
         ('PREV', 'Preventivo'),
         ('CORR', 'Corretivo'),
-        
     ]
+
+    # Campo de privacidade
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     
+    # Os seus campos originais corretos
     veiculo = models.ForeignKey(Veiculo, on_delete=models.CASCADE, related_name='servicos')
     data_execucao = models.DateField()
     tipo_servico = models.CharField(max_length=4, choices=TIPO_SERVICO)
     descricao = models.CharField(max_length=200)
     quilometragem = models.IntegerField(help_text="KM no momento do serviço")
-    
+
+    def __str__(self):
+        return f"{self.get_tipo_servico_display()} - {self.veiculo} ({self.data_execucao})"
     periodicidade_meses = models.IntegerField(null=True, blank=True, help_text="Repetir em X meses")
     periodicidade_km = models.IntegerField(null=True, blank=True, help_text="Repetir em X km")
     
