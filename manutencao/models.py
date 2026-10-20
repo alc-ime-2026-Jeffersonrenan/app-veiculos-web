@@ -6,10 +6,6 @@ class Servico(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     
 class Veiculo(models.Model):
-    # 2. Adicione este campo à sua tabela de veículos:
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
-    
-class Veiculo(models.Model):
     TIPO_VEICULO = [
         ('CAR', 'Carro'),
         ('MOT', 'Moto'),
