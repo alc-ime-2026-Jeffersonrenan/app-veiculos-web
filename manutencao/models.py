@@ -1,6 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User # <-- 1. Adicione esta importação no topo
 
+class Servico(models.Model):
+    # Adicione esta linha exata à sua tabela de Serviços:
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+    
 class Veiculo(models.Model):
     # 2. Adicione este campo à sua tabela de veículos:
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
