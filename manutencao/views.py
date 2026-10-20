@@ -1,8 +1,22 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import User
 from django.contrib import messages
+from .models import Veiculo, Servico
+from datetime import date, timedelta
+
+# Importação das suas tabelas da base de dados
+# Se tiver outras tabelas (ex: Marca, Categoria), adicione-as nesta mesma linha separadas por vírgula.
+from .forms import VeiculoForm, ServicoForm
+
+# Se utilizar um ficheiro forms.py para cadastrar veículos, garanta que ele é importado aqui:
+# from .forms import VeiculoForm, ServicoForm  <-- (Descomente e ajuste os nomes se os usar)
+
+
+# =======================================================
+# PARTE 1: CADASTRO E GESTÃO DE UTILIZADORES (NOVO)
+# =======================================================
 
 def cadastrar_usuario(request):
     if request.method == 'POST':
@@ -14,21 +28,26 @@ def cadastrar_usuario(request):
     else:
         form = UserCreationForm()
     return render(request, 'manutencao/cadastro.html', {'form': form})
-@user_passes_test(lambda u: u.is_superuser)
 
+@user_passes_test(lambda u: u.is_superuser)
 def gestao_usuarios(request):
     usuarios = User.objects.all().order_by('-date_joined')
     return render(request, 'manutencao/gestao_usuarios.html', {'usuarios': usuarios})
-@user_passes_test(lambda u: u.is_superuser)
 
+@user_passes_test(lambda u: u.is_superuser)
 def alternar_status_usuario(request, user_id):
     usuario = get_object_or_404(User, id=user_id)
-    # Impede que o superusuário desative a própria conta
+    # Impede que o superusuário desative a própria conta por acidente
     if usuario != request.user:
         usuario.is_active = not usuario.is_active
         usuario.save()
-        messages.success(request, f'Status do usuário {usuario.username} alterado com sucesso.')
+        messages.success(request, f'Status do utilizador {usuario.username} alterado com sucesso.')
     return redirect('gestao_usuarios')
+
+
+# =======================================================
+# PARTE 2: FUNCIONALIDADES DO SISTEMA (SEU CÓDIGO ATUAL)
+# =======================================================
 
 @login_required
 def dashboard(request):
