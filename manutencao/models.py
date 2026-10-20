@@ -1,6 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User # <-- 1. Adicione esta importação no topo
 
+class Veiculo(models.Model):
+    # 2. Adicione este campo à sua tabela de veículos:
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+    
 class Veiculo(models.Model):
     TIPO_VEICULO = [
         ('CAR', 'Carro'),

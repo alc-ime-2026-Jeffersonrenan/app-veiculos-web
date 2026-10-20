@@ -153,10 +153,11 @@ def adicionar_veiculo(request):
     if request.method == 'POST':
         form = VeiculoForm(request.POST)
         if form.is_valid():
-            veiculo = form.save(commit=False)
-            veiculo.usuario = request.user
-            veiculo.save()
+            veiculo = form.save(commit=False)  # Prepara os dados, mas pausa a gravação
+            veiculo.usuario = request.user     # Injeta o utilizador que está logado
+            veiculo.save()                     # Conclui a gravação na base de dados
             return redirect('dashboard')
+    # ... resto da função
     else:
         form = VeiculoForm()
     
